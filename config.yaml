@@ -1,0 +1,124 @@
+baseURL: "https://nd15.github.io/notes/"
+title: "Nemo"
+paginate: 5
+theme: "PaperMod"
+enableInlineShortcodes: true
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+enableEmoji: true
+pygmentsUseClasses: true
+
+minify:
+  disableXML: true
+
+languages:
+  en:
+    languageName: "English"
+    weight: 1
+    taxonomies:
+      category: "categories"
+      tag: "tags"
+      series: "series"
+    menu:
+      main:
+        - name: "Blogs"
+          url: "posts"
+          weight: 20
+        - name: "Archive"
+          url: "archives"
+          weight: 5
+        - name: "Search"
+          url: "search/"
+          weight: 10
+        - identifier: "about"
+          name: "About"
+          url: "about/"
+          weight: 4
+
+outputs:
+  home:
+    - "HTML"
+    - "RSS"
+    - "JSON"
+
+params:
+  env: "production"
+  title: "Nikhil's Blog"
+  description: "This website contains my blog posts on different topics on various topics which includes ML, DL, DSP and Optimization."
+  keywords:
+    - "Blog"
+    - "Portfolio"
+    - "ML"
+    - "DL"
+  defaultTheme: "auto"
+  ShowShareButtons: true
+  ShowReadingTime: true
+  displayFullLangName: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowRssButtonInSectionTermList: true
+  ShowToc: true
+
+  profileMode:
+    enabled: false
+    title: "Welcome!"
+    subtitle: |
+      This is my personal website where I put out blogs on different posts on a variety of topics. Currently I am working as a Machine Learning Engineer.
+    buttons:
+      - name: "Blogs"
+        url: "posts"
+      - name: "Projects"
+        url: "projects"
+
+  homeInfoParams:
+    Title: "Hi there 👋"
+    Content: |
+      Welcome to my blog.
+      - This is my personal website where I put out blogs on different posts as I try to learn a variety of topics. Currently I am working as a Machine Learning Engineer.
+      - I make 3D art in my freetime.😊
+
+  socialIcons:
+    - name: "github"
+      url: "https://github.com/ND15"
+    - name: "Rss"
+      url: "index.xml"
+
+  label:
+    text: "Nemo's Home"
+    icon: "favicon-96x96.png"
+    iconHeight: 35
+
+  assets:
+    disableHLJS: true
+    favicon: "favicon-96x96.png"
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+
+privacy:
+  vimeo:
+    disabled: false
+    simple: true
+  twitter:
+    disabled: false
+    enableDNT: true
+    simple: true
+  instagram:
+    disabled: false
+    simple: true
+  youtube:
+    disabled: false
+    privacyEnhanced: true
+
+services:
+  instagram:
+    disableInlineCSS: true
+  twitter:
+    disableInlineCSS: true
