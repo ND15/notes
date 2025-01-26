@@ -7,6 +7,10 @@ aliases: ["/SpecGAN"]
 math: true
 ShowBreadCrumbs: false
 --- 
+
+> "Whatever limits us, we call Fate."  
+> — Ralph Waldo Emerson
+
 # Adversarial Audio Synthesis
 
 <p>With the rise of GANs and the possibilities they offer, the question of whether or not 
