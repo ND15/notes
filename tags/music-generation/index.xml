@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>music generation on Nemo</title>
+    <link>https://nd15.github.io/notes/tags/music-generation/</link>
+    <description>Recent content in music generation on Nemo</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 25 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://nd15.github.io/notes/tags/music-generation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Relative Global Attention - Music Transformer</title>
+      <link>https://nd15.github.io/notes/posts/musictransformer/</link>
+      <pubDate>Sat, 25 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://nd15.github.io/notes/posts/musictransformer/</guid>
+      <description>Understanding Relative Global Attention</description>
+    </item>
+    
+  </channel>
+</rss>

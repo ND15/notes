@@ -2,6 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://nd15.github.io/notes/tags/music-generation/</loc>
+    <lastmod>2025-01-25T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://nd15.github.io/notes/</loc>
     <lastmod>2025-01-25T00:00:00+00:00</lastmod>
   </url><url>
@@ -9,6 +12,12 @@
     <lastmod>2025-01-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nd15.github.io/notes/posts/musictransformer/</loc>
+    <lastmod>2025-01-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nd15.github.io/notes/tags/</loc>
+    <lastmod>2025-01-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://nd15.github.io/notes/tags/transformers/</loc>
     <lastmod>2025-01-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://nd15.github.io/notes/posts/specgan/</loc>
@@ -30,7 +39,5 @@
     <loc>https://nd15.github.io/notes/search/</loc>
   </url><url>
     <loc>https://nd15.github.io/notes/series/</loc>
-  </url><url>
-    <loc>https://nd15.github.io/notes/tags/</loc>
   </url>
 </urlset>

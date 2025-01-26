@@ -4,6 +4,25 @@
     <title>Tags on Nemo</title>
     <link>https://nd15.github.io/notes/tags/</link>
     <description>Recent content in Tags on Nemo</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://nd15.github.io/notes/tags/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 25 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://nd15.github.io/notes/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>music generation</title>
+      <link>https://nd15.github.io/notes/tags/music-generation/</link>
+      <pubDate>Sat, 25 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://nd15.github.io/notes/tags/music-generation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>transformers</title>
+      <link>https://nd15.github.io/notes/tags/transformers/</link>
+      <pubDate>Sat, 25 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://nd15.github.io/notes/tags/transformers/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>
