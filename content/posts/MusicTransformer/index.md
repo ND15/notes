@@ -2,9 +2,10 @@
 author: Nemo
 title: Relative Global Attention - Music Transformer
 date: 2025-01-25
-summary: My Notes on Optimized Relative Global Attention  
+summary: Understanding Relative Global Attention  
 aliases: [ "/MusicTransformer" ]
 math: true
+tags: ["music generation", "transformers"]
 ShowBreadCrumbs: false
 ---
 > "The only truth is music."  
