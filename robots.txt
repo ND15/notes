@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://nd15.github.io/notes/sitemap.xml

@@ -1,0 +1,372 @@
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>Notes on Forward and Back-Propagation in RNNs | Nemo</title>
+<meta name=keywords content>
+<meta name=description content="Notes consisting of the complete derivation of the forward and backpropagation rules in RNN.">
+<meta name=author content="Nemo">
+<link rel=canonical href=https://nd15.github.io/notes/posts/rnn/>
+<link crossorigin=anonymous href=/notes/assets/css/stylesheet.min.f075bdc9222ab6cd79fa288b271fe3018ed11875a85363328b0c3e462246b4f3.css integrity="sha256-8HW9ySIqts15+iiLJx/jAY7RGHWoU2Myiww+RiJGtPM=" rel="preload stylesheet" as=style>
+<link rel=icon href=https://nd15.github.io/notes/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=https://nd15.github.io/notes/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://nd15.github.io/notes/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://nd15.github.io/notes/apple-touch-icon.png>
+<link rel=mask-icon href=https://nd15.github.io/notes/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript><meta property="og:title" content="Notes on Forward and Back-Propagation in RNNs">
+<meta property="og:description" content="Notes consisting of the complete derivation of the forward and backpropagation rules in RNN.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://nd15.github.io/notes/posts/rnn/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2023-01-06T00:00:00+00:00">
+<meta property="article:modified_time" content="2023-01-06T00:00:00+00:00"><meta property="og:site_name" content="Nikhil's Blog">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Notes on Forward and Back-Propagation in RNNs">
+<meta name=twitter:description content="Notes consisting of the complete derivation of the forward and backpropagation rules in RNN.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://nd15.github.io/notes/posts/"},{"@type":"ListItem","position":2,"name":"Notes on Forward and Back-Propagation in RNNs","item":"https://nd15.github.io/notes/posts/rnn/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Notes on Forward and Back-Propagation in RNNs","name":"Notes on Forward and Back-Propagation in RNNs","description":"Notes consisting of the complete derivation of the forward and backpropagation rules in RNN.","keywords":[],"articleBody":"Recurrent Neural Network(RNN) RNN Diagram Internal Architecture of RNN Internal RNN Architecture\n    Forward Propagation  In forward propagation, the input data is fed into the RNN in a forward direction to calculate the output at each timestep, for simplicity assume that each timestep is basically a word in a sentence so first timestep would indicate the input of the first word to the network, the input data passed through the input and hidden layer to the output layer where the output is predicted. For that predicted output the loss is calculated with the help of a loss function. Here we assume a few things, first we assume that the activation function in the hidden layer is the tanh(tangent hyperbolic) function and the output activation function is the softmax function. The softmax function gives us the normalized probabilities from the output. The equations for softmax and tanh functions are given below:\n Softmax function $$ \\textrm{softmax}({z_i}) = \\frac{e^{z_i}}{\\sum_{k=1}^{K}e^{z_k}} $$ Tanh function $$ \\tanh({x}) = \\frac{2}{1+e^{-2x}} - 1 $$  The equations for the forward propagation at any time step t are: $$ {h_t} = \\tanh(U{x_t} + W{h_{t-1}}) $$ $$ {y_t} = \\textrm{softmax}(V{h_t}) $$ $$ {L_t} = -{y_t}\\log\\hat{{y_t}} $$ The argument of the softmax function can also be written as $$ {z_t} = {V{h_t}} $$ Then the equation becomes $$ {y_t} = \\textrm{softmax}(z_t) $$\n The total loss for any given input sequence \\(\\textrm{x}\\) is the summation of all the losses over every time step given by \\(\\sum_{t=0}^{T}{L_t}\\). Backpropagation Through Time(BPTT) Back-propagation involves propagating the error from the output layer to the input layer. Backpropagation helps reduce the error by adjusting the weights between the layers. In back-propagation we pass the calculated gradients backward through the network in reverse order in order to update the weights of each layer which in fact effects the output of the network. This propagation of the gradients is called backpropagation through time because in RNN we are calculating the gradients w.r.t the current timestep and then passing it to the previous timesteps, this can be evidently seen when deriving the update rules for the weights matrices. In recurrent neural networks the trainable parameters are the weights U, V and W and hence they need to be updated. The updation of this weights can be done by the following set of equations: $$ {W} = {W} - \\alpha{\\frac{\\partial L}{\\partial W}} $$ $$ {V} = {U} - \\alpha{\\frac{\\partial L}{\\partial V}} $$ $$ {U} = {U} - \\alpha{\\frac{\\partial L}{\\partial U}} $$\n Here \\(\\alpha \\) is the learning rate. Now, deriving the update rules for the weights can be in the following way:\nUpdate Rules for V $$ \\begin{align} {\\frac{\\partial {L}}{\\partial V}} \u0026 = {\\frac{\\partial {L_0}}{\\partial V}} + {\\frac{\\partial {L_1}}{\\partial V}} + … + {\\frac{\\partial {L_T}}{\\partial V}} \\\\ \u0026 = \\sum_{i=0}^{T}{\\frac{\\partial {L_i}}{\\partial V}} \\\\ \\tag{1.1}\\label{eq:par_L_V} \u0026 = \\sum_{i=0}^{T}\\frac{\\partial {L_i}}{\\partial {y_i}}\\frac{\\partial {y_i}}{\\partial {z_i}}\\frac{\\partial {z_i}}{\\partial {V}} \\end{align} $$\nSolving for the first term of \\eqref{eq:par_L_V}\n$$ \\begin{align} \\frac{\\partial {L_i}}{\\partial {y_i}} \u0026 = \\frac{\\partial }{\\partial {y_i}}{(-{y_i}\\log \\hat{y_i})} \\\\ \u0026 = -{y_i}\\frac{\\partial }{\\partial {y_i}}{\\log \\hat{y_i}}\\\\ \u0026 = -{y_i}\\frac{1}{\\hat{y_i}} \\\\ \\tag{1.2}\\label{eq:W} \u0026 = -\\frac{y_i}{\\hat{y_i}} \\end{align} $$\n  For solving the second term of \\eqref{eq:par_L_V}, we have to break down the partial derivative into two cases: \\(\\textrm{i} = \\textrm{k}\\) and \\(\\textrm{i} \\neq \\textrm{k}\\). Case 1: $$ \\begin{align} \\frac{\\partial {y_i}}{\\partial {z_k}} \u0026 = \\frac{\\partial }{\\partial {z_k}}(\\frac{e^{z_i}}{\\sum_{k=1}^{K}e^{s_k}})\\\\ \u0026 = \\frac{e^{z_i}}{\\sum_{k=1}^{K}e^{s_k}} - {e^{z_i}}\\left(\\frac{{e^{z_i}}}{(\\sum_{k=1}^{K}e^{s_k})^2}\\right) \\\\ \u0026 = \\frac{e^{z_i}}{\\sum_{k=1}^{K}e^{s_k}} - \\left(\\frac{{e^{z_i}}}{(\\sum_{k=1}^{K}e^{s_k})}\\right)^2 \\\\ \u0026 = \\hat{y_i}\\left( 1 - \\hat{y_i}\\right) \\end{align} $$\nCase 2: $$ \\begin{align} \\frac{\\partial {y_i}}{\\partial {z_k}} \u0026 = \\frac{\\partial }{\\partial {z_k}}(\\frac{e^{z_i}}{\\sum_{k=1}^{K}e^{s_k}})\\\\ \u0026 = \\frac{0 - {e^{z_i}}{e^{z_k}}}{(\\sum_{k=1}^{K}e^{s_k})^2} \\\\ \u0026 = -\\hat{y_i}\\hat{y_k} \\end{align} $$\nNow,\n$$ \\begin{align} \\frac{\\partial {L}}{\\partial V} \u0026 = \\sum_{i=0}^{T}\\frac{\\partial {L_i}}{\\partial {y_i}}\\frac{\\partial {y_i}}{\\partial {z_i}}\\frac{\\partial {z_i}}{\\partial {V}} \\\\ \\frac{\\partial {L}}{\\partial V} \u0026 = \\sum_{i=0}^{T}\\frac{\\partial {L_i}}{\\partial {z_i}}\\frac{\\partial {z_i}}{\\partial {V}} \\\\ \\frac{\\partial {L_i}}{\\partial {z_i}} \u0026 = -\\frac{y_i}{\\hat{y_i}}\\begin{cases} \\hat{y_i}\\left( 1 - \\hat{y_i}\\right), \u0026 \\text{if $i = k$}.\\\\ -\\hat{y_i}\\hat{y_k}, \u0026 \\text{otherwise}. \\end{cases}\\\\ \\tag{1.3}\\label{eq:V_cases} \u0026 = \\begin{cases} -{y_i}\\left( 1 - \\hat{y_i}\\right), \u0026 \\text{if $i = k$}.\\\\ {y_i}\\hat{y_k}, \u0026 \\text{otherwise}. \\end{cases}\\\\ \\end{align} $$\nIn order to get a general expression for eqn \\eqref{eq:V_cases}, we need to sum for all the K number of classes, hence the equation becomes $$ \\begin{align} \\frac{\\partial {L_i}}{\\partial {z_k}} \u0026 = -{y_i} + {y_i}\\hat{y_i} + \\sum_{i \\neq k}{y_i}\\hat{y_k} \\\\ \u0026 = -{y_k} + {y_k}\\hat{y_k} + \\sum_{i \\neq k}{y_i}\\hat{y_k} \\\\ \u0026 = -{y_k} + \\hat{y_k}\\left({y_k} + \\sum_{i \\neq k}{{y_i}}\\right) \\end{align} $$ The part inside the bracket becomes a sum over all the k classes, therefore $$ \\begin{align} \\frac{\\partial {L_i}}{\\partial {z_k}} \u0026 = -{y_k} + \\hat{y_k}\\left(\\sum_{i=1}^{k}{{y_i}}\\right) \\\\ \u0026 = -{y_k} + \\hat{y_k} \\left(\\because \\sum_{i=1}^{k} = 1\\right) \\end{align} $$\nSolving for the third term of \\eqref{eq:par_L_V} $$ \\begin{align} \\frac{\\partial {z_i}}{\\partial {V}} \u0026 = \\frac{\\partial}{\\partial {V}}(V{h_i}) \\\\ \u0026 = {h_i} \\end{align} $$\nSubsituiting all these values in eqn \\eqref{eq:par_L_V}, we get\n$$ \\begin{align} \\frac{\\partial {L}}{\\partial {V}} \u0026 = \\sum_{i=0}^{T}(\\hat{y_i} - {y_i}) \\otimes {h_i} \\end{align} $$\nUpdate rule for W $$ \\begin{align} {\\frac{\\partial {L}}{\\partial W}} \u0026 = {\\frac{\\partial {L_0}}{\\partial W}} + {\\frac{\\partial {L_1}}{\\partial W}} + … + {\\frac{\\partial {L_T}}{\\partial W}} \\\\ \u0026 = \\sum_{i=0}^{T}{\\frac{\\partial {L_i}}{\\partial W}} \\\\ \\tag{2.1}\\label{eq:par_L_W} \u0026 = \\sum_{i=0}^{T}\\frac{\\partial {L_i}}{\\partial {y_i}}\\frac{\\partial {y_i}}{\\partial {h_i}}\\frac{\\partial {h_i}}{\\partial {W}} \\end{align} $$\n$$ \\begin{align} {\\frac{\\partial {L_1}}{\\partial W}} \u0026 = \\frac{\\partial {L_1}}{\\partial \\hat{y_1}}\\frac{\\partial \\hat{y_1}}{\\partial {h_1}}\\frac{\\partial {h_1}}{\\partial {W}}\\\\ \\tag{2.2}\\label{eq:par_L_2} {\\frac{\\partial {L_2}}{\\partial W}} \u0026 = \\frac{\\partial {L_2}}{\\partial \\hat{y_2}}\\frac{\\partial \\hat{y_2}}{\\partial {h_2}}\\frac{\\partial {h_2}}{\\partial {W}}\\\\ \\end{align} $$\n  The term \\({h_2}\\) is defined as \\({h_2}\\) = \\(\\tanh(U{x_2} + W{h_1})\\)  It can be seen that the term \\({h_2}\\) is dependent on the previous timestep's hidden state \\({h_1}\\). So, in order compute the partial derivative of the hidden state w.r.t \\({W}\\) we can split it into two parts - explicit and implicit. The explicit part treats the argument inside the tanh function as a constant while the implicit part moves inside the function and does the derivative of the function. $$ {\\frac{\\partial {h_2}}{\\partial W}} = \\frac{\\partial {h_2^+}}{\\partial {W}} + \\frac{\\partial {h_2}}{\\partial {h_1}}\\frac{\\partial {h_1}}{\\partial {W}} $$ The equation \\eqref{eq:par_L_2} can thus be written as $$ \\begin{align} {\\frac{\\partial {L_2}}{\\partial W}} \u0026 = \\frac{\\partial {L_2}}{\\partial \\hat{y_2}}\\frac{\\partial \\hat{y_2}}{\\partial {h_2}} \\left( \\frac{\\partial {h_2^+}}{\\partial {W}} + \\frac{\\partial {h_2}}{\\partial {h_1}}\\frac{\\partial {h_1}}{\\partial {W}}\\right)\\\\ \u0026 = \\frac{\\partial {L_2}}{\\partial \\hat{y_2}}\\frac{\\partial \\hat{y_2}}{\\partial {h_2}}\\frac{\\partial {h_2^+}}{\\partial {W}} + \\frac{\\partial {L_2}}{\\partial \\hat{y_2}}\\frac{\\partial \\hat{y_2}}{\\partial {h_2}}\\frac{\\partial {h_2}}{\\partial {h_1}}\\frac{\\partial {h_1}}{\\partial {W}} \\end{align} $$\nGeneralizing this equation it becomes,\n$$ \\begin{align} \\frac{\\partial {L_i}}{\\partial {W}} = \\sum_{k=1}^{i}\\frac{\\partial {L_i}}{\\partial \\hat{y_i}}\\frac{\\partial \\hat{y_i}}{\\partial {h_i}} \\frac{\\partial \\hat{h_i}}{\\partial {h_k}}\\frac{\\partial {h_k^+}}{\\partial {W}} \\\\ \\tag{2.3}\\label{eq:par_L_gen} \\frac{\\partial {L}}{\\partial {W}} = \\sum_{i=1}^{T}\\sum_{k=1}^{i}\\frac{\\partial {L_i}}{\\partial \\hat{y_i}}\\frac{\\partial \\hat{y_i}}{\\partial {h_i}} \\frac{\\partial {h_i}}{\\partial {h_k}}\\frac{\\partial {h_k^+}}{\\partial {W}} \\end{align} $$\n Here, \\(\\frac{\\partial h_i}{\\partial h_k}\\) is a chain rule within itself i.e. if \\(i = 3\\) and \\(k = 1\\), then \\(\\frac{\\partial h_3}{\\partial h_1} = \\frac{\\partial h_3}{\\partial h_2}\\frac{\\partial h_2}{\\partial h_1}\\) Hence the equation \\eqref{eq:par_L_gen} becomes\n$$ \\begin{align} \\frac{\\partial {L}}{\\partial {W}} = \\sum_{i=1}^{T}\\sum_{k=1}^{i}\\frac{\\partial {L_i}}{\\partial \\hat{y_i}}\\frac{\\partial \\hat{y_i}}{\\partial {h_i}}\\left(\\prod_{m=k+1}^{i} \\frac{\\partial {h_m}}{\\partial {h_{m-1}}}\\right)\\frac{\\partial {h_k^+}}{\\partial {W}} \\end{align} $$\n Now at any point m, we know that \\(h_m = \\tanh(Ux_m + Wh_{m-1})\\) and \\(\\frac{\\partial h_m}{\\partial h_{m-1}} = W^Tdiag(1-\\tanh^2(Ux_m + Wh_{m-1}))\\) Also, \\(\\frac{\\partial {L_i}}{\\partial \\hat{y_i}}\\frac{\\partial \\hat{y_i}}{\\partial {h_i}} = \\hat{y_i} - {y_i}\\) and the explicit derivative is \\(\\frac{\\partial {h_k^+}}{\\partial {W}} = {h_{k-1}}\\). There the complete equation is: $$ \\tag{2.4}\\label{eq:complete_W} \\frac{\\partial {L}}{\\partial {W}} = \\sum_{i=1}^{T}\\sum_{k=1}^{i}(\\hat{y_i} - {y_i})\\left(\\prod_{m=k+1}^{i} W^Tdiag(1-\\tanh^2(Ux_m + Wh_{m-1}))\\right)\\otimes {h_{k-1}} $$\nUpdate rule for U  The update rule for \\(U\\) can be derived in the same manner as \\(W\\), the only difference comes in the explicit part of \\(U\\).The explicit derivative is \\(\\frac{\\partial {h_k^+}}{\\partial {U}} = {x_{k}}\\) Hence the complete update rule is: $$ \\tag{2.5}\\label{eq:complete_U} \\frac{\\partial {L}}{\\partial {U}} = \\sum_{i=1}^{T}\\sum_{k=1}^{i}(\\hat{y_i} - {y_i})\\left(\\prod_{m=k+1}^{i} W^Tdiag(1-\\tanh^2(Ux_m + Wh_{m-1}))\\right)\\otimes {x_k} $$\nReferences  Activation Functions in Neural Networks Recurrent Neural Networks Ahlad Kumar’s Playlist RNN from scratch\n ","wordCount":"1234","inLanguage":"en","datePublished":"2023-01-06T00:00:00Z","dateModified":"2023-01-06T00:00:00Z","author":{"@type":"Person","name":"Nemo"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://nd15.github.io/notes/posts/rnn/"},"publisher":{"@type":"Organization","name":"Nemo","logo":{"@type":"ImageObject","url":"https://nd15.github.io/notes/favicon-96x96.png"}}}</script>
+</head>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<header class="header sticky-header">
+<nav class=nav>
+<div class=logo>
+<a href=https://nd15.github.io/notes/ accesskey=h title="Nemo's Home (Alt + H)">
+<img src=https://nd15.github.io/notes/favicon-96x96.png alt=logo aria-label=logo height=35>Nemo's Home</a>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://nd15.github.io/notes/about/ title=About>
+<span>About</span>
+</a>
+</li>
+<li>
+<a href=https://nd15.github.io/notes/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://nd15.github.io/notes/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
+<li>
+<a href=https://nd15.github.io/notes/posts title=Blogs>
+<span>Blogs</span>
+</a>
+</li>
+</ul>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<h1 class=post-title>
+Notes on Forward and Back-Propagation in RNNs
+</h1>
+<div class=post-meta>
+6 min&nbsp;·&nbsp;Nemo
+</div>
+</header> <div class=toc>
+<details>
+<summary accesskey=c title="(Alt + C)">
+<span class=details>‎ Table of Contents</span>
+</summary>
+<div class=inner><ul>
+<li>
+<a href=#recurrent-neural-networkrnn aria-label="Recurrent Neural Network(RNN)">Recurrent Neural Network(RNN)</a></li>
+<li>
+<a href=#internal-architecture-of-rnn aria-label="Internal Architecture of RNN">Internal Architecture of RNN</a></li>
+<li>
+<a href=#forward-propagation aria-label="Forward Propagation">Forward Propagation</a></li>
+<li>
+<a href=#backpropagation-through-timebptt aria-label="Backpropagation Through Time(BPTT)">Backpropagation Through Time(BPTT)</a><ul>
+<li>
+<a href=#update-rules-for-v aria-label="Update Rules for V">Update Rules for V</a></li>
+<li>
+<a href=#update-rule-for-w aria-label="Update rule for W">Update rule for W</a></li>
+<li>
+<a href=#update-rule-for-u aria-label="Update rule for U">Update rule for U</a></li></ul>
+</li>
+<li>
+<a href=#references aria-label=References>References</a>
+</li>
+</ul>
+</div>
+</details>
+</div>
+<div class=post-content><h3 id=recurrent-neural-networkrnn>Recurrent Neural Network(RNN)<a hidden class=anchor aria-hidden=true href=#recurrent-neural-networkrnn>#</a></h3>
+<p><img loading=lazy src=images/my_rnn_diagram.png alt=regular title="RNN Diagram">
+</p>
+<p align=center>
+RNN Diagram
+</p>
+<h3 id=internal-architecture-of-rnn>Internal Architecture of RNN<a hidden class=anchor aria-hidden=true href=#internal-architecture-of-rnn>#</a></h3>
+<center><img src=images/internal_rnn.png alt=drawing width=600></br><p>Internal RNN Architecture</p></center>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css integrity=sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq crossorigin=anonymous>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js integrity=sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js integrity=sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type=text/javascript></script>
+<h3 id=forward-propagation>Forward Propagation<a hidden class=anchor aria-hidden=true href=#forward-propagation>#</a></h3>
+<p>  In forward propagation, the input data is fed into the RNN in a forward direction to calculate the output at each timestep, for simplicity assume that each timestep is basically a word in a sentence so first timestep would indicate the input of the first word to the network, the input data passed through the input and hidden layer to the output layer where the output is predicted. For that predicted output the loss is calculated with the help of a loss function. Here we assume a few things, first we assume that the activation function in the hidden layer is the tanh(tangent hyperbolic) function and the output activation function is the softmax function. The softmax function gives us the normalized probabilities from the output. The equations for softmax and tanh functions are given below:</p>
+<ul>
+<li>Softmax function
+$$
+\textrm{softmax}({z_i}) = \frac{e^{z_i}}{\sum_{k=1}^{K}e^{z_k}}
+$$</li>
+<li>Tanh function
+$$
+\tanh({x}) = \frac{2}{1+e^{-2x}} - 1
+$$</li>
+</ul>
+<p>The equations for the forward propagation at any time step t are:
+$$
+{h_t} = \tanh(U{x_t} + W{h_{t-1}})
+$$
+$$
+{y_t} = \textrm{softmax}(V{h_t})
+$$
+$$
+{L_t} = -{y_t}\log\hat{{y_t}}
+$$
+The argument of the softmax function can also be written as
+$$
+{z_t} = {V{h_t}}
+$$
+Then the equation becomes
+$$
+{y_t} = \textrm{softmax}(z_t)
+$$</p>
+<p>
+The total loss for any given input sequence \(\textrm{x}\) is the summation of all the losses over every time step given by \(\sum_{t=0}^{T}{L_t}\).
+</p>
+<h3 id=backpropagation-through-timebptt>Backpropagation Through Time(BPTT)<a hidden class=anchor aria-hidden=true href=#backpropagation-through-timebptt>#</a></h3>
+<p><em>Back-propagation involves propagating the error from the output layer to the input layer. Backpropagation helps reduce the error by adjusting the weights between the layers. In back-propagation we pass the calculated gradients backward through the network in reverse order in order to update the weights of each layer which in fact effects the output of the network. This propagation of the gradients is called backpropagation through time because in RNN we are calculating the gradients w.r.t the current timestep and then passing it to the previous timesteps, this can be evidently seen when deriving the update rules for the weights matrices.</em></br>
+<em>In recurrent neural networks the trainable parameters are the weights U, V and W and hence they need to be updated. The updation of this weights can be done by the following set of equations:</em>
+$$
+{W} = {W} - \alpha{\frac{\partial L}{\partial W}}
+$$
+$$
+{V} = {U} - \alpha{\frac{\partial L}{\partial V}}
+$$
+$$
+{U} = {U} - \alpha{\frac{\partial L}{\partial U}}
+$$</p>
+<p>
+<center>Here \(\alpha \) is the learning rate.</center>
+</p>
+<p>Now, deriving the update rules for the weights can be in the following way:</p>
+<h4 id=update-rules-for-v>Update Rules for V<a hidden class=anchor aria-hidden=true href=#update-rules-for-v>#</a></h4>
+<p>$$
+\begin{align}
+{\frac{\partial {L}}{\partial V}} & = {\frac{\partial {L_0}}{\partial V}} + {\frac{\partial {L_1}}{\partial V}} + &mldr; + {\frac{\partial {L_T}}{\partial V}} \\
+& = \sum_{i=0}^{T}{\frac{\partial {L_i}}{\partial V}} \\
+\tag{1.1}\label{eq:par_L_V}
+& = \sum_{i=0}^{T}\frac{\partial {L_i}}{\partial {y_i}}\frac{\partial {y_i}}{\partial {z_i}}\frac{\partial {z_i}}{\partial {V}}
+\end{align}
+$$</p>
+<p>Solving for the first term of \eqref{eq:par_L_V}</p>
+<p>$$
+\begin{align}
+\frac{\partial {L_i}}{\partial {y_i}} & = \frac{\partial }{\partial {y_i}}{(-{y_i}\log \hat{y_i})} \\
+& = -{y_i}\frac{\partial }{\partial {y_i}}{\log \hat{y_i}}\\
+& = -{y_i}\frac{1}{\hat{y_i}} \\
+\tag{1.2}\label{eq:W}
+& = -\frac{y_i}{\hat{y_i}}
+\end{align}
+$$</p>
+<p>
+<p>
+For solving the second term of \eqref{eq:par_L_V}, we have to break down the partial derivative into two cases: \(\textrm{i} = \textrm{k}\) and \(\textrm{i} \neq \textrm{k}\).
+</p>
+<strong>Case 1:</strong>
+$$
+\begin{align}
+\frac{\partial {y_i}}{\partial {z_k}} & = \frac{\partial }{\partial {z_k}}(\frac{e^{z_i}}{\sum_{k=1}^{K}e^{s_k}})\\
+& = \frac{e^{z_i}}{\sum_{k=1}^{K}e^{s_k}} - {e^{z_i}}\left(\frac{{e^{z_i}}}{(\sum_{k=1}^{K}e^{s_k})^2}\right) \\
+& = \frac{e^{z_i}}{\sum_{k=1}^{K}e^{s_k}} - \left(\frac{{e^{z_i}}}{(\sum_{k=1}^{K}e^{s_k})}\right)^2 \\
+& = \hat{y_i}\left( 1 - \hat{y_i}\right)
+\end{align}
+$$</p>
+<p><strong>Case 2:</strong>
+$$
+\begin{align}
+\frac{\partial {y_i}}{\partial {z_k}} & = \frac{\partial }{\partial {z_k}}(\frac{e^{z_i}}{\sum_{k=1}^{K}e^{s_k}})\\
+& = \frac{0 - {e^{z_i}}{e^{z_k}}}{(\sum_{k=1}^{K}e^{s_k})^2} \\
+& = -\hat{y_i}\hat{y_k}
+\end{align}
+$$</p>
+<p>Now,</p>
+<p>$$
+\begin{align}
+\frac{\partial {L}}{\partial V} & = \sum_{i=0}^{T}\frac{\partial {L_i}}{\partial {y_i}}\frac{\partial {y_i}}{\partial {z_i}}\frac{\partial {z_i}}{\partial {V}} \\
+\frac{\partial {L}}{\partial V} & = \sum_{i=0}^{T}\frac{\partial {L_i}}{\partial {z_i}}\frac{\partial {z_i}}{\partial {V}} \\
+\frac{\partial {L_i}}{\partial {z_i}} & = -\frac{y_i}{\hat{y_i}}\begin{cases}
+\hat{y_i}\left( 1 - \hat{y_i}\right), & \text{if $i = k$}.\\
+-\hat{y_i}\hat{y_k}, & \text{otherwise}.
+\end{cases}\\
+\tag{1.3}\label{eq:V_cases}
+& = \begin{cases}
+-{y_i}\left( 1 - \hat{y_i}\right), & \text{if $i = k$}.\\
+{y_i}\hat{y_k}, & \text{otherwise}.
+\end{cases}\\
+\end{align}
+$$</p>
+<p>In order to get a general expression for eqn \eqref{eq:V_cases}, we need to sum for all the K number of classes, hence the equation becomes
+$$
+\begin{align}
+\frac{\partial {L_i}}{\partial {z_k}} & = -{y_i} + {y_i}\hat{y_i} + \sum_{i \neq k}{y_i}\hat{y_k} \\
+& = -{y_k} + {y_k}\hat{y_k} + \sum_{i \neq k}{y_i}\hat{y_k} \\
+& = -{y_k} + \hat{y_k}\left({y_k} + \sum_{i \neq k}{{y_i}}\right)
+\end{align}
+$$
+The part inside the bracket becomes a sum over all the k classes, therefore
+$$
+\begin{align}
+\frac{\partial {L_i}}{\partial {z_k}} & = -{y_k} + \hat{y_k}\left(\sum_{i=1}^{k}{{y_i}}\right) \\
+& = -{y_k} + \hat{y_k} \left(\because \sum_{i=1}^{k} = 1\right)
+\end{align}
+$$</p>
+<p>Solving for the third term of \eqref{eq:par_L_V}
+$$
+\begin{align}
+\frac{\partial {z_i}}{\partial {V}} & = \frac{\partial}{\partial {V}}(V{h_i}) \\
+& = {h_i}
+\end{align}
+$$</p>
+<p>Subsituiting all these values in eqn \eqref{eq:par_L_V}, we get</p>
+<p>$$
+\begin{align}
+\frac{\partial {L}}{\partial {V}} & = \sum_{i=0}^{T}(\hat{y_i} - {y_i}) \otimes {h_i}
+\end{align}
+$$</p>
+<h4 id=update-rule-for-w>Update rule for W<a hidden class=anchor aria-hidden=true href=#update-rule-for-w>#</a></h4>
+<p>$$
+\begin{align}
+{\frac{\partial {L}}{\partial W}} & = {\frac{\partial {L_0}}{\partial W}} + {\frac{\partial {L_1}}{\partial W}} + &mldr; + {\frac{\partial {L_T}}{\partial W}} \\
+& = \sum_{i=0}^{T}{\frac{\partial {L_i}}{\partial W}} \\
+\tag{2.1}\label{eq:par_L_W}
+& = \sum_{i=0}^{T}\frac{\partial {L_i}}{\partial {y_i}}\frac{\partial {y_i}}{\partial {h_i}}\frac{\partial {h_i}}{\partial {W}}
+\end{align}
+$$</p>
+<p>$$
+\begin{align}
+{\frac{\partial {L_1}}{\partial W}} & = \frac{\partial {L_1}}{\partial \hat{y_1}}\frac{\partial \hat{y_1}}{\partial {h_1}}\frac{\partial {h_1}}{\partial {W}}\\
+\tag{2.2}\label{eq:par_L_2}
+{\frac{\partial {L_2}}{\partial W}} & = \frac{\partial {L_2}}{\partial \hat{y_2}}\frac{\partial \hat{y_2}}{\partial {h_2}}\frac{\partial {h_2}}{\partial {W}}\\
+\end{align}
+$$</p>
+<p>
+<p>
+The term \({h_2}\) is defined as
+<center>\({h_2}\) = \(\tanh(U{x_2} + W{h_1})\)</center> </br>
+It can be seen that the term \({h_2}\) is dependent on the previous timestep's hidden state \({h_1}\).</br>
+So, in order compute the partial derivative of the hidden state w.r.t \({W}\) we can split it into two parts - explicit and implicit. The explicit part treats the argument inside the tanh function as a constant while the implicit part moves inside the function and does the derivative of the function.</br>
+</p>
+$$
+{\frac{\partial {h_2}}{\partial W}} = \frac{\partial {h_2^+}}{\partial {W}} + \frac{\partial {h_2}}{\partial {h_1}}\frac{\partial {h_1}}{\partial {W}}
+$$
+The equation \eqref{eq:par_L_2} can thus be written as
+$$
+\begin{align}
+{\frac{\partial {L_2}}{\partial W}} & = \frac{\partial {L_2}}{\partial \hat{y_2}}\frac{\partial \hat{y_2}}{\partial {h_2}} \left( \frac{\partial {h_2^+}}{\partial {W}} + \frac{\partial {h_2}}{\partial {h_1}}\frac{\partial {h_1}}{\partial {W}}\right)\\
+& = \frac{\partial {L_2}}{\partial \hat{y_2}}\frac{\partial \hat{y_2}}{\partial {h_2}}\frac{\partial {h_2^+}}{\partial {W}} + \frac{\partial {L_2}}{\partial \hat{y_2}}\frac{\partial \hat{y_2}}{\partial {h_2}}\frac{\partial {h_2}}{\partial {h_1}}\frac{\partial {h_1}}{\partial {W}}
+\end{align}
+$$</p>
+<p>Generalizing this equation it becomes,</p>
+<p>$$
+\begin{align}
+\frac{\partial {L_i}}{\partial {W}} = \sum_{k=1}^{i}\frac{\partial {L_i}}{\partial \hat{y_i}}\frac{\partial \hat{y_i}}{\partial {h_i}}
+\frac{\partial \hat{h_i}}{\partial {h_k}}\frac{\partial {h_k^+}}{\partial {W}} \\
+\tag{2.3}\label{eq:par_L_gen}
+\frac{\partial {L}}{\partial {W}} = \sum_{i=1}^{T}\sum_{k=1}^{i}\frac{\partial {L_i}}{\partial \hat{y_i}}\frac{\partial \hat{y_i}}{\partial {h_i}}
+\frac{\partial {h_i}}{\partial {h_k}}\frac{\partial {h_k^+}}{\partial {W}}
+\end{align}
+$$</p>
+<p>
+Here, \(\frac{\partial h_i}{\partial h_k}\) is a chain rule within itself i.e. if \(i = 3\) and \(k = 1\), then
+<center>\(\frac{\partial h_3}{\partial h_1} = \frac{\partial h_3}{\partial h_2}\frac{\partial h_2}{\partial h_1}\)</center>
+</p>
+<p>Hence the equation \eqref{eq:par_L_gen} becomes</p>
+<p>$$
+\begin{align}
+\frac{\partial {L}}{\partial {W}} = \sum_{i=1}^{T}\sum_{k=1}^{i}\frac{\partial {L_i}}{\partial \hat{y_i}}\frac{\partial \hat{y_i}}{\partial {h_i}}\left(\prod_{m=k+1}^{i}
+\frac{\partial {h_m}}{\partial {h_{m-1}}}\right)\frac{\partial {h_k^+}}{\partial {W}}
+\end{align}
+$$</p>
+<p>
+Now at any point m, we know that \(h_m = \tanh(Ux_m + Wh_{m-1})\) and
+<center>\(\frac{\partial h_m}{\partial h_{m-1}} = W^Tdiag(1-\tanh^2(Ux_m + Wh_{m-1}))\)</center></br>
+Also, \(\frac{\partial {L_i}}{\partial \hat{y_i}}\frac{\partial \hat{y_i}}{\partial {h_i}} = \hat{y_i} - {y_i}\) and the explicit derivative is \(\frac{\partial {h_k^+}}{\partial {W}} = {h_{k-1}}\). There the complete equation is:
+</p>
+<p>$$
+\tag{2.4}\label{eq:complete_W}
+\frac{\partial {L}}{\partial {W}} = \sum_{i=1}^{T}\sum_{k=1}^{i}(\hat{y_i} - {y_i})\left(\prod_{m=k+1}^{i}
+W^Tdiag(1-\tanh^2(Ux_m + Wh_{m-1}))\right)\otimes {h_{k-1}}
+$$</p>
+<h4 id=update-rule-for-u>Update rule for U<a hidden class=anchor aria-hidden=true href=#update-rule-for-u>#</a></h4>
+<p>
+The update rule for \(U\) can be derived in the same manner as \(W\), the only difference comes in the explicit part of \(U\).The explicit derivative is
+<center>\(\frac{\partial {h_k^+}}{\partial {U}} = {x_{k}}\)</center></br>
+Hence the complete update rule is:
+</p>
+<p>$$
+\tag{2.5}\label{eq:complete_U}
+\frac{\partial {L}}{\partial {U}} = \sum_{i=1}^{T}\sum_{k=1}^{i}(\hat{y_i} - {y_i})\left(\prod_{m=k+1}^{i}
+W^Tdiag(1-\tanh^2(Ux_m + Wh_{m-1}))\right)\otimes {x_k}
+$$</p>
+<h3 id=references>References<a hidden class=anchor aria-hidden=true href=#references>#</a></h3>
+<blockquote>
+<p><cite><a href=https://towardsdatascience.com/activation-functions-neural-networks-1cbd9f8d91d6>Activation Functions in Neural Networks</a></cite></br>
+<cite><a href=https://towardsdatascience.com/recurrent-neural-networks-rnns-3f06d7653a85>Recurrent Neural Networks</a></cite></br>
+<cite><a href="https://www.youtube.com/playlist?list=PLdxQ7SoCLQANQ9fQcJ0wnnTzkFsJHlWEj">Ahlad Kumar&rsquo;s Playlist</a></cite></br>
+<cite><a href=https://github.com/gy910210/rnn-from-scratch>RNN from scratch</a></cite></br></p>
+</blockquote>
+</div>
+<footer class=post-footer>
+<ul class=post-tags>
+</ul>
+<nav class=paginav>
+<a class=prev href=https://nd15.github.io/notes/posts/segnet/>
+<span class=title>« Prev</span>
+<br>
+<span>Notes on SegNet - A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation</span>
+</a>
+</nav>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share Notes on Forward and Back-Propagation in RNNs on twitter" href="https://twitter.com/intent/tweet/?text=Notes%20on%20Forward%20and%20Back-Propagation%20in%20RNNs&url=https%3a%2f%2fnd15.github.io%2fnotes%2fposts%2frnn%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Notes on Forward and Back-Propagation in RNNs on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fnd15.github.io%2fnotes%2fposts%2frnn%2f&title=Notes%20on%20Forward%20and%20Back-Propagation%20in%20RNNs&summary=Notes%20on%20Forward%20and%20Back-Propagation%20in%20RNNs&source=https%3a%2f%2fnd15.github.io%2fnotes%2fposts%2frnn%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Notes on Forward and Back-Propagation in RNNs on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fnd15.github.io%2fnotes%2fposts%2frnn%2f&title=Notes%20on%20Forward%20and%20Back-Propagation%20in%20RNNs"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Notes on Forward and Back-Propagation in RNNs on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fnd15.github.io%2fnotes%2fposts%2frnn%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Notes on Forward and Back-Propagation in RNNs on whatsapp" href="https://api.whatsapp.com/send?text=Notes%20on%20Forward%20and%20Back-Propagation%20in%20RNNs%20-%20https%3a%2f%2fnd15.github.io%2fnotes%2fposts%2frnn%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Notes on Forward and Back-Propagation in RNNs on telegram" href="https://telegram.me/share/url?text=Notes%20on%20Forward%20and%20Back-Propagation%20in%20RNNs&url=https%3a%2f%2fnd15.github.io%2fnotes%2fposts%2frnn%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
+</div>
+</footer>
+</article>
+</main>
+<footer class=footer>
+<span>&copy; 2025 <a href=https://nd15.github.io/notes/>Nemo</a></span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerHTML='copy';function d(){a.innerHTML='copied!',setTimeout(()=>{a.innerHTML='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
+</body>
+</html>

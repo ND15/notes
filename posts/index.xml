@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Posts on Nemo</title>
+    <link>https://nd15.github.io/notes/posts/</link>
+    <description>Recent content in Posts on Nemo</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 25 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://nd15.github.io/notes/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Relative Global Attention - Music Transformer</title>
+      <link>https://nd15.github.io/notes/posts/musictransformer/</link>
+      <pubDate>Sat, 25 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://nd15.github.io/notes/posts/musictransformer/</guid>
+      <description>My Notes on Optimized Relative Global Attention</description>
+    </item>
+    
+    <item>
+      <title>SpecGAN - GAN for audio generation</title>
+      <link>https://nd15.github.io/notes/posts/specgan/</link>
+      <pubDate>Thu, 23 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://nd15.github.io/notes/posts/specgan/</guid>
+      <description>My Notes on the SpecGAN, a audio generation model</description>
+    </item>
+    
+    <item>
+      <title>Notes on SegNet - A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation</title>
+      <link>https://nd15.github.io/notes/posts/segnet/</link>
+      <pubDate>Tue, 31 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://nd15.github.io/notes/posts/segnet/</guid>
+      <description>My Notes on the SegNet semantic segmentation architecture</description>
+    </item>
+    
+    <item>
+      <title>Notes on Forward and Back-Propagation in RNNs</title>
+      <link>https://nd15.github.io/notes/posts/rnn/</link>
+      <pubDate>Fri, 06 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://nd15.github.io/notes/posts/rnn/</guid>
+      <description>Notes consisting of the complete derivation of the forward and backpropagation rules in RNN.</description>
+    </item>
+    
+  </channel>
+</rss>
